@@ -5,9 +5,6 @@
 
   <image href="https://s0.gifyu.com/images/hello_kitty_Hello_Kitty_Head_ClipArt_in_PNG_File.png" height="512" width="512" />
 
-
-  <circle cx="128" cy="128" r="10" stroke="red" fill="none"  />
-
   <rect width="512" height="512" stroke="red" fill="rgba(255,255,255,0.95)" opacity="0.95" ></rect>
 
   <text x="2" y="12" font-size="12" text-anchor="start" fill="red">0</text>
@@ -44,8 +41,26 @@
   <text x="492" y="12" font-size="12" text-anchor="start" fill="red">512</text>
 
   <path d="M256 256 V270 V242 M256 256 H270 H242" stroke="black" fill="white"></path>
-  
-  <text x="254" y="250" font-size="16" text-anchor="middle" fill="red">(256, 256)</text>
-</svg>
 
+  <text x="254" y="250" font-size="16" text-anchor="middle" fill="red">(256, 256)</text>
+
+  <ellipse fill="#77DD47" stroke="#246614" stroke-width="5" cx="256" cy="270" rx="200" ry="150" opacity="0.2"/>
+
+  <path d="M420 95 A200 1100, 35, 0, 0, 330 125" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+  <path d="M440 200 A200 1100, 20, 0, 0, 420 95" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+
+  <path d="M180 128 A200 88, 50, 0, 0, 100 100" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+  <path d="M100 100 A200 88, 60, 0, 0, 80 190" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+
+  <path d="M80 190 A200 160, 0, 1, 0, 440 200" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+
+  <path d="M330 127 A200 140, 0, 0, 0, 180 127" stroke-width="5" stroke="#F00" fill="none" opacity="0.3"/>
+
+  
+
+  <circle cx="0" cy="0" r="1" stroke="blue" fill="none">
+    <animateMotion dur="6s" path="M420 95 A200 1100, 35, 0, 0, 330 125, M330 127 A200 140, 0, 0, 0, 180 127, M180 128 A200 88, 50, 0, 0, 100 100, M100 100 A200 88, 60, 0, 0, 80 190, M80 190 A200 160, 0, 1, 0, 440 200, M440 200 A200 1100, 20, 0, 0, 420 95" repeatCount="indefinite" rotate="auto"/>
+    <animate attributeName="r" to="15" dur="6s" repeatCount="indefinite"/>
+  </circle>
+</svg>
     
