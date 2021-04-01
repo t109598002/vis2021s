@@ -93,18 +93,18 @@ https://www.oxxostudio.tw/articles/201501/svg-d3-13-csv.html
                     .selectAll("td")
                         .data(function(d) { return d; }).enter()
                         .append("td")
-                        .text(function(d, i) { 
+                        .html(function(d, i) { 
                             if(d==1 && (i+1)%5==0) {
-                                return document.getElementById(i).innerHTML = '<img src>="./92.png" width = "50" height = "50"';
+                                return "<img src='92.png' width='60' height='60'>";
                             }
                             else if(d==0 && (i+1)%5==0) {
-                                return "./93.png";
+                                return "<img src='93.png' width='60' height='60'>";
                             }
                             else if(d==1 && (i+1)%6==0) {
-                                return "./92.png";
+                                return "<img src='92.png' width='60' height='60'>";
                             }
                             else if(d==0 && (i+1)%6==0) {
-                                return "./93.png";
+                                return "<img src='93.png' width='60' height='60'>";
                             }
                             else {
                                 return d;    
