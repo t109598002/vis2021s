@@ -14,8 +14,7 @@
   <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
   <style type="text/css">
   svg {
-    font: 10px sans-serif;
-    shape-rendering: crispEdges;
+    font: 10px serif;
   }
 
   .axis path,
@@ -23,13 +22,13 @@
     fill: none;
     stroke: #000;
   }
- 
+
   path.domain {
     stroke: none;
   }
- 
+
   .y .tick line {
-    stroke: #ddd;
+    stroke: rgba(221, 221, 221, 0);
   }
   </style>
 
@@ -39,10 +38,10 @@
 
 // Setup svg using Bostock's margin convention
 
-var margin = {top: 20, right: 160, bottom: 35, left: 30};
+var margin = {top: 20, right: 60, bottom: 35, left: 30};
 
-var width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
+var width = 1900 - margin.left - margin.right,
+    height = 900 - margin.top - margin.bottom;
 
 var svg = d3.select("body")
   .append("svg")
@@ -52,74 +51,65 @@ var svg = d3.select("body")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
-/* Data in strings like it would be if imported from a csv */
-
-var data = [
-  { year: "2006", redDelicious: "10", mcintosh: "15", oranges: "9", pears: "6" },
-  { year: "2007", redDelicious: "12", mcintosh: "18", oranges: "9", pears: "4" },
-  { year: "2008", redDelicious: "05", mcintosh: "20", oranges: "8", pears: "2" },
-  { year: "2009", redDelicious: "01", mcintosh: "15", oranges: "5", pears: "4" },
-  { year: "2010", redDelicious: "02", mcintosh: "10", oranges: "4", pears: "2" },
-  { year: "2011", redDelicious: "03", mcintosh: "12", oranges: "6", pears: "3" },
-  { year: "2012", redDelicious: "04", mcintosh: "15", oranges: "8", pears: "1" },
-  { year: "2013", redDelicious: "06", mcintosh: "11", oranges: "9", pears: "4" },
-  { year: "2014", redDelicious: "10", mcintosh: "13", oranges: "9", pears: "5" },
-  { year: "2015", redDelicious: "16", mcintosh: "19", oranges: "6", pears: "9" },
-  { year: "2016", redDelicious: "19", mcintosh: "17", oranges: "5", pears: "7" },
-];
-
-
+// Data in strings like it would be if imported from a csv
 var parse = d3.time.format("%Y").parse;
 
+var datas = [];
 
-// Transpose the data into layers
-var dataset = d3.layout.stack()(["redDelicious", "mcintosh", "oranges", "pears"].map(function(fruit) {
-  return data.map(function(d) {
-    return {x: parse(d.year), y: +d[fruit]};
+var text = d3.text("./data.csv", function(data){
+  var parseCSV =  d3.csv.parseRows(data);
+  parseCSV.forEach(function(item, index){
+    if(index != 0){
+      datas.push({index:index-1,Ch:item[0],En:item[1],Fr:item[2],Ge:item[3],Ja:item[4],type1:item[5],type2:item[6]})
+    }
   });
-}));
-
+  datas = Object.values(datas);
+  var dataset = d3.layout.stack()(["Ch", "En", "Fr", "Ge", "Ja"].map(function(type) {
+    return datas.map(function(d) {
+      console.log(d);
+      return {x: d.index, y: +d[type]};
+    });
+  }));
 
 // Set x, y and colors
 var x = d3.scale.ordinal()
   .domain(dataset[0].map(function(d) { return d.x; }))
-  .rangeRoundBands([10, width-10], 0.02);
+  .rangeRoundBands([0, width], 0.05);
 
 var y = d3.scale.linear()
   .domain([0, d3.max(dataset, function(d) {  return d3.max(d, function(d) { return d.y0 + d.y; });  })])
   .range([height, 0]);
 
-var colors = ["b33040", "#d25c4d", "#f2b447", "#d9d574"];
+var colors = ["#b3306f", "#d25c4d", "#f2b447", "#acd974", "#0968f1"];
 
 
 // Define and draw axes
 var yAxis = d3.svg.axis()
   .scale(y)
   .orient("left")
-  .ticks(5)
+  .ticks(25)
   .tickSize(-width, 0, 0)
   .tickFormat( function(d) { return d } );
 
 var xAxis = d3.svg.axis()
   .scale(x)
   .orient("bottom")
-  .tickFormat(d3.time.format("%Y"));
 
-svg.append("g")
-  .attr("class", "y axis")
-  .call(yAxis);
-
+  
 svg.append("g")
   .attr("class", "x axis")
-  .attr("transform", "translate(0," + height + ")")
-  .call(xAxis);
+  .attr("transform", "translate(-100," + height + ")")
+  .call(xAxis)
+  .selectAll("text")
+  .attr("transform", "translate(12,20)rotate(90)");
 
 
-// Create groups for each series, rects for each segment 
+// Create groups for each series, rects for each segment
 var groups = svg.selectAll("g.cost")
   .data(dataset)
   .enter().append("g")
   .attr("class", "cost")
+  .attr("transform", "translate(-100," + 0 + ")")
   .style("fill", function(d, i) { return colors[i]; });
 
 var rect = groups.selectAll("rect")
@@ -137,44 +127,42 @@ var rect = groups.selectAll("rect")
     var yPosition = d3.mouse(this)[1] - 25;
     tooltip.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
     tooltip.select("text").text(d.y);
-
   });
 
-
-// Draw legend
-var legend = svg.selectAll(".legend")
+// Draw chart
+var chart = svg.selectAll("chart")
   .data(colors)
   .enter().append("g")
-  .attr("class", "legend")
-  .attr("transform", function(d, i) { return "translate(30," + i * 19 + ")"; });
- 
-legend.append("rect")
+  .attr("class", "chart")
+  .attr("transform", function(d, i) { return "translate(-140," + i * 19 + ")"; });
+
+chart.append("rect")
   .attr("x", width - 18)
   .attr("width", 18)
   .attr("height", 18)
   .style("fill", function(d, i) {return colors.slice().reverse()[i];});
- 
-legend.append("text")
+
+chart.append("text")
   .attr("x", width + 5)
   .attr("y", 9)
   .attr("dy", ".35em")
   .style("text-anchor", "start")
-  .text(function(d, i) { 
+  .text(function(d, i) {
     switch (i) {
       case 0: return "國文";
       case 1: return "英文";
       case 2: return "法文";
       case 3: return "德文";
-      case 3: return "日文";
+      case 4: return "日文";
     }
   });
 
 
-// Prep the tooltip bits, initial display is hidden
+// Tooltip of colors chart 
 var tooltip = svg.append("g")
   .attr("class", "tooltip")
   .style("display", "none");
-    
+
 tooltip.append("rect")
   .attr("width", 30)
   .attr("height", 20)
@@ -183,11 +171,10 @@ tooltip.append("rect")
 
 tooltip.append("text")
   .attr("x", 15)
-  .attr("dy", "1.2em")
+  .attr("dy", "1.0em")
   .style("text-anchor", "middle")
-  .attr("font-size", "12px")
-  .attr("font-weight", "bold");
-
+  .attr("font-size", "8px")
+})
 </script>
 </body>
 </html>
