@@ -1,274 +1,297 @@
-
 <!DOCTYPE html>
 <html>
 <head>
-  <title></title>
-  <!--
-  <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-  -->
-  <script src="./d3.v4.min.js" charset="utf-8"></script>
-  <style type="text/css">
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@900&display=swap');
+	<title></title>
+	<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
+	<style type="text/css">
 
-    body {
-      /* background-image: url("1a.png"); */
-    }
+		body {
+			/* background-image: url("1a.png"); */
+		}
 
-    video {
-      position:absolute; 
-      top:50%; 
-      left:50%; 
-      margin-left:-480px; 
-      margin-top:-270px;
-    }
+		video {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -480px;
+			margin-top: -370px;
+		}
 
-    svg {
-      position:absolute; 
-      top:50%; 
-      left:50%; 
-      margin-left:-480px; 
-      margin-top:-270px;
-      border: 1px solid gray;
-    }
+		svg {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-left: -480px;
+			margin-top: -370px;
+			border: 1px solid gray;
+		}
 
-    svg text {
-      /* font-weight: 100; */
-      font-size: 60px;
-        fill: white;
-        stroke: blue;
-        font-family: 'Noto Sans JP', 'Noto Serif JP', 'MS PGothic';
-    }
+		@font-face {
+		  	font-family: tang;
+		  	src: url("./HanyiSentyTang.ttf");
+		}
+			svg text {
+				font-size: 60px;
+				font-weight: bold;
+				fill: white;
+				stroke: black;
+				stroke-width: 0.1px;
+				font-family: tang;
+			}
 
-    #clock {
-      /* font-weight: 100; */
-      font-size: 36px;
-        fill: white;
-        stroke: blue;
-        font-family: 'Noto Sans JP', 'Noto Serif JP', 'MS PGothic';
-    }
+			svg text {
+				/* opacity:0.7; */
+			}
 
-    svg text {
-      /* opacity:0.7; */
-    }
+				svg text:hover {
+					/* opacity:1; */
+				}
 
-    svg text:hover {
-      /* opacity:1; */
-    }
+		text:hover {
+			fill: black;
+		}
 
-    text:hover {
-      fill: red;
-    }
+		#replay:hover {
+			box-shadow: 0px 0px 5px 5px rgba(255, 128, 128, 0.5);
+		}
 
-    #replay:hover {
-      box-shadow: 0px 0px 5px 5px rgba(255, 128, 128, 0.5);
-    }
+		#video:hover {
+			box-shadow: 0px 0px 5px 5px rgba(128, 255, 128, 0.5);
+		}
 
-    #video:hover {
-      box-shadow: 0px 0px 5px 5px rgba(128, 255, 128, 0.5);
-    }
+		#subtitle:hover {
+			box-shadow: 0px 0px 5px 5px rgba(128, 128, 255, 0.5);
+		}
 
-    #subtitle:hover {
-      box-shadow: 0px 0px 5px 5px rgba(128, 128, 255, 0.5);
-    }
-
-    #subtitle {
-      /* pointer-events: none; */
-    }
-
-        .text_black{
-            fill: black;
-            text-shadow:
-                1px 0 0 white,
-                0 1px 0 white,
-                -1px 0 0 white,
-                0 -1px 0 white,
-                -1px -1px 0 white,
-                1px -1px 0 white,
-                -1px 1px 0 white,
-                1px 1px 0 white; 
-        }
-
-  </style>
+		#subtitle {
+			pointer-events: none;
+		}
+	</style>
 </head>
 <body>
 
-  <video id="video" width="960px" height="540" preload="auto" onended="document.getElementById('replay').style.display='inline'; document.getElementById('video').style.display='none'; d3.select('#subtitle').remove();">
-      <source src="../lab09/240.mp4" type="video/mp4">
-  </video>
+	<video id="video" width="960" height="540" preload="auto">
+		<source src="./xiloubiexu.mp4" type="video/mp4">
+	</video>
 
-  <div id="srt"></div>
+	<div id="srt"></div>
 
-  <script type="text/javascript">
+	<script type="text/javascript">
+		var w = 960;
+		var h = 700;
+		var frame = -1;
+		var textAniTime = 100;
+		var totalTime = '--:--'
+		var maxTimeLength = 0
 
-    document.getElementById("video").style.display = "none";
-
-    d3.select('body')
-      .append('svg')
-      .attr('id', 'replay')
-      .attr('width', 960)
-      .attr('height', 540)
-      .append('text')
-      .text("Replay")
-      .attr('x', 540)
-      .attr('y', 279)
-      .attr("text-anchor", "middle")
-      .on('click', function(){
-        document.getElementById("video").play();
-        document.getElementById("video").style.display = "inline";
-        //document.getElementById("subtitle").style.display = "inline";
-        //this.style.display = 'none';
-        document.getElementById("replay").style.display = "none";
-        make_subtitle();
-      })
-      ;
-
-    var myarray = [];
-    var key;
-    var begin;
-    var end;
-    var dur;
-    var subtitle;
-
-    var time;
-
-        var to_clock = function(time){
-      if (time % 60 < 10) 
-        return '0' + parseInt(time / 60) + ':' + '0' + time % 60;
-      else
-        return '0' + parseInt(time / 60) + ':' + time % 60;
-        }
-
-
-    function play_time(){
-
-      time = 0;
-
-      var time2 = parseInt( document.getElementById("video").duration );
-      //alert(time2 + ' seconds');
-      
-      let timer = setInterval(() => {
-
-        var mytime  = to_clock(time);
-        var mytime2 = to_clock(time2);
-
-          d3.select('#subtitle')
-            .append('text')
-            .attr('id', 'clock')
-            .text(mytime +' / ' + mytime2)
-            .attr('x', 700)
-            .attr('y', 40)
-            .attr('opacity', 0)
-            .transition()
-            .duration(1000)
-            .attr('opacity', 1)
-            .transition()
-            .duration(1000)
-            .attr('opacity', 0)
-            .remove()
-            ;
-
-          time++;
-      }, 1000);
-    }
-
-
-    function make_subtitle(){
-
-      d3.text('daoko.srt', function(data){
-        console.log(data);
-        //alert(data);
-
-        parsedCSV = d3.csvParseRows(data);
-        console.log(parsedCSV);
-        //alert('parsedCSV.length = ' + parsedCSV.length);
-
-        d3.select('#srt')
-          .selectAll('p')
-          .data(parsedCSV)
-          .enter()
-          .append("p")
-          .text(function(d, i){
-            //return d;
-            if ( !isNaN(d) && d != '' ){
-              key = parseInt(d);
-            } else if (d == '') {
-              myarray.push({
-                "key": key,
-                "begin": begin,
-                "end": end,
-                "dur": end - begin,
-                "subtile": subtile
-              });
-            } else if (d.length == 3 ){
-              begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
-                      (parseInt(d[0][6]) * 10 + parseInt(d[0][7]));
-
-              end =   (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
-                      (parseInt(d[1][14]) * 10 + parseInt(d[1][15]));
-            } else {
-              subtile = d;
-            }   
-          })
-          ;
-
-          // 摰峕�鞉�諹��
-          console.log(myarray);
-
-          // 摰峕�鞉�諹��
-          var w = 960;
-          var h = 540;
-
-          var svg = d3.select('body')
-            .append('svg')
-            .attr('id', 'subtitle')
+        var svg = d3.select('body')
+			.append('svg')
             .attr('width', w)
             .attr('height', h)
-            .attr('viewbox', function(){
-              return "0, 0, " + w + ', ' + h;
+            .attr('viewbox', function () {
+                return "0, 0, " + w + ', ' + h;
             })
             ;
 
-        svg.selectAll('text')
-             .data(myarray)
-             .enter()
-             .append('text')
-             .attr('class', 'text_1')
-             .text(function(d, i){
-            return d.subtile;
-          })
-             .attr('begin', function(d, i){
-                return d.begin;
-             })
-             .attr('end', function(d, i){
-                return d.end;
-             })
-             .attr('x', w / 2)
-             .attr('y', h - 50)
-             .attr("text-anchor", "middle")
-             //.style('display', 'none')
-             .attr('opacity', 0)
-             .transition()
-             .delay(function(d){
-               return (d.begin - d.dur / 2) * 1000;
-             })
-             .duration(function(d){
-                 return (d.dur + d.dur / 2) * 1000;
-             })
-             .attr('opacity', 1)
-             .transition()
-               .duration(function(d){
-                   return (d.dur / 6.0 * 1000.0);
-               })
-             .attr('opacity', 0)
-             ;
+		var play_state = 0
 
-          play_time();
-      })
-    }
+		var playBtnText = svg
+			.append('text')
+			.text("Replay")
+			.attr('x', 100)
+			.attr('y', 500)
+			.attr("text-anchor", "middle")
+			.on('click', function () {
+				if (play_state == 0) {
+					timeline.attr('width',0)
+					play_state = 1
+					frame = -1
+                    playBtnText.text("Stop")
+					document.getElementById("video").play();
+					document.getElementById("video").style.display = "inline";
+				}
+				else if (play_state == 1) {
+					play_state = 2
+                    playBtnText.text("Play")
+					document.getElementById("video").pause();
+				}
+				else if (play_state == 2) {
+					play_state = 1
+                    playBtnText.text("Pause")
+                    document.getElementById("video").play();
+                }
+			});
+
+		svg
+			.on('mouseenter', function () {
+				if (play_state == 0)
+					return
+
+                playBtnText.transition()
+					.duration(100)
+					.attr('opacity',1)
+			})
+			.on('mouseleave', function () {
+				if (play_state == 0)
+					return
+
+				playBtnText.transition()
+					.delay(1000)
+                    .duration(500)
+                    .attr('opacity', 0);
+            })
 
 
+		var timelineGroup = svg.append('g')
+		timelineGroup
+			.append('rect')
+			.attr('width', w)
+            .attr('height', 30)
+            .attr('fill', 'gray')
+            .attr('x', 0)
+            .attr('y', h - 20)
 
-  </script>
+		var timeline = timelineGroup
+			.append('rect')
+            .attr('width', 0)
+            .attr('height', 20)
+            .attr('fill', 'red')
+            .attr('x', 0)
+			.attr('y', h - 20)
+
+        timelineGroup
+            .append('rect')
+            .attr('width', w)
+            .attr('height', 20)
+            .attr('opacity', 0)
+            .attr('x', 0)
+            .attr('y', h - 20)
+			.on('click', function () {
+				frame = -1
+                var coordinates = d3.mouse(this);
+                var x = coordinates[0]
+                time = Math.round(x / w * maxTimeLength);
+                document.getElementById("video").currentTime = time
+
+            })
+
+		d3.select(video)
+			.style('display', 'none')
+			.on('ended', function () {
+				play_state = 0
+				playBtnText.attr('opacity',1)
+				playBtnText.text('Replay')
+				document.getElementById('video').style.display = 'none';
+			})
+			.on('timeupdate', () => {
+				play_time(video.currentTime);
+				play_subtitle(video.currentTime);
+			});
+
+		var timeText = svg
+			.append('text')
+			.text('--:--')
+			.attr('x', 740)
+			.attr('y', 60)
+
+		make_subtitle();
+
+		function play_time(time){
+
+			var second = parseInt(time / 60);
+			var minute = parseInt(time % 60);
+			if (minute < 10)
+				minute = '0' + minute;
+			if (second < 10)
+				second = '0' + second;
+			
+			timeText.text(second + ':' + minute);
+			timeline.attr('width', time/maxTimeLength*w)
+		}
+
+		function play_subtitle(currentTime) {
+
+			subtitle.filter(function (d, i) {
+					if (frame < i && currentTime > d.begin && currentTime < d.end) {
+						frame = i;
+						return true;
+					}
+					return false;
+				})
+				.transition()
+				.duration(textAniTime)
+				.attr('opacity', 1)
+				.transition()
+				.delay(function (d) {
+					return (d.end - currentTime) * 1000;
+				})
+				.duration(textAniTime)
+				.attr('opacity', 0)
+				;
+		}
+
+		async function make_subtitle() {
+			var myarray = [];
+			d3.text('xiloubiexu.srt', function(data){
+				console.log(data);
+				//alert(data);
+
+				parsedCSV = d3.csvParseRows(data);
+				console.log(parsedCSV);
+				//alert('parsedCSV.length = ' + parsedCSV.length);
+
+				d3.select('#srt')
+				  .selectAll('p')
+				  .data(parsedCSV)
+				  .enter()
+				  .append("p")
+				  .text(function(d, i){
+				  	//return d;
+				  	if ( !isNaN(d) && d != '' ){
+							key = parseInt(d);
+				  	} else if (d == '') {
+				  		myarray.push({
+				  			"begin": begin,
+				  			"end": end,
+				  			"subtile": subtile
+				  		});
+				  	} else if (d.length == 3 ){
+							
+				  		begin = (parseInt(d[0][3]) * 10 + parseInt(d[0][4])) * 60 +
+				  		        (parseInt(d[0][6]) * 10 + parseInt(d[0][7]));
+
+				  		end =   (parseInt(d[1][11]) * 10 + parseInt(d[1][12])) * 60 +
+								(parseInt(d[1][14]) * 10 + parseInt(d[1][15]));
+                            totalTime = d[1][11] + d[1][12] + ':' + d[1][14] + d[1][15]
+                            maxTimeLength = end
+				  	} else {
+				  		subtile = d;
+				  	}
+				  })
+					;
+				console.log(myarray)
+				subtitle = svg
+					.append('g')
+					.attr('id', 'subtitle')
+					.selectAll('text')
+					.data(myarray)
+					.enter()
+					.append('text')
+					.text(function (d, i) {
+						return d.subtile;
+					})
+					.attr('x', w / 2)
+					.attr('y', function (d, i) {
+						if (i % 2 == 0) {
+                            return h - 50
+                        }
+						return h-100
+					})
+					.attr("text-anchor", "middle")
+					//.style('display', 'none')
+					.attr('opacity', 0)
+
+			})
+		}</script>
 </body>
 </html>
