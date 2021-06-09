@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+
+    <style>
+        html,
+        body {
+            height: 200%;
+        }
+        #training-section, #testing-section {
+            height: 100%;
+			overflow: hidden;
+        }
+
+        #train-vs-test {
+            height: 100%;
+            position: fixed;
+            max-width: 100%;
+        }
+
+        .padding {
+            height: 100%;
+        }
+
+        #right {
+            width: 60%;
+            height: 100%;
+            position: relative;
+            float: right;
+        }
+        #left {
+            width: 40%;
+            height: 100%;
+            float: left;
+        }
+    </style>
+</head>
+
+<body>
+
+
+        <div id="right">
+            <div id="train-vs-test"></div>
+        </div>
+
+        <div id="left">
+            <div id="topic-section">
+                <h1>
+                    題目：World Happiness Report 2006~2020
+                </h1>
+            </div>
+            <div id="training-section">
+				<h1>
+					訓練資料集的部分
+				</h1>
+            </div>
+            <div id="testing-section">
+				<h1>
+					測試資料集的部分
+				</h1>
+            </div>
+        </div>
+        
+        
+        
+        
+        <script src="./lib/d3.v3.min.js"></script>
+        <script src="./lib/binarydecisiontree.min.js"></script>
+
+        <script>
+            var topicName = "The World Happiness Report is a landmark survey of the state of global happiness . The report continues to gain global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness."
+
+            var countryName = "Country name：國家";
+            var lifeLadder = "Life Ladder：生命階梯";
+            var perGDP = "Log GDP per capita：人均GDP"
+            var socialSupport = "Social support：社會支持"
+            var healthyLife = "Healthy life expectancy at birth：出生時的健康預期壽命"
+            var freedom = "Freedom to make life choices：自由選擇人生"
+            var generosity = "Generosity：慷慨"
+            var corruptionPer = "Perceptions of corruption：對於腐敗的看法"
+            var positiveAffect = "Positive affect：正面影響"
+
+            window.onload = function () {
+                function resizeRight(){
+                    d3.select("#train-vs-test")
+                        .style("width", d3.select("#right").node().clientWidth + "px")
+                    ;
+                }
+
+                resizeRight();
+
+                d3.select(window)
+                    .on("resize", function(){ resizeRight() })
+                ;
+
+
+                /**
+                 * 填版面，不然全部都是白色的很單調
+                 * 這兩個 section 是要讓同學放說明資料和圖片的地方
+                */
+                d3.select("#topic-section")
+                    .selectAll("p")
+                    .data(d3.range(1))
+                    .enter()
+                    .append("p")
+                    .text(topicName)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(1))
+                    .enter()
+                    .append("p")
+                    .text(countryName)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(2))
+                    .enter()
+                    .append("p")
+                    .text(lifeLadder)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(3))
+                    .enter()
+                    .append("p")
+                    .text(perGDP)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(4))
+                    .enter()
+                    .append("p")
+                    .text(socialSupport)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(5))
+                    .enter()
+                    .append("p")
+                    .text(healthyLife)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(6))
+                    .enter()
+                    .append("p")
+                    .text(freedom)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(7))
+                    .enter()
+                    .append("p")
+                    .text(generosity)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(8))
+                    .enter()
+                    .append("p")
+                    .text(corruptionPer)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(9))
+                    .enter()
+                    .append("p")
+                    .text(positiveAffect)
+                ;
+
+
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(1))
+                    .enter()
+                    .append("p")
+                    .text(countryName)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(2))
+                    .enter()
+                    .append("p")
+                    .text(lifeLadder)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(3))
+                    .enter()
+                    .append("p")
+                    .text(perGDP)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(4))
+                    .enter()
+                    .append("p")
+                    .text(socialSupport)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(5))
+                    .enter()
+                    .append("p")
+                    .text(healthyLife)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(6))
+                    .enter()
+                    .append("p")
+                    .text(freedom)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(7))
+                    .enter()
+                    .append("p")
+                    .text(generosity)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(8))
+                    .enter()
+                    .append("p")
+                    .text(corruptionPer)
+                ;
+                d3.select("#testing-section")
+                    .selectAll("p")
+                    .data(d3.range(9))
+                    .enter()
+                    .append("p")
+                    .text(positiveAffect)
+                ;
+
+				d3.select("#training-section")
+                    .selectAll("img")
+					.data(d3.range(1, 10))
+					.enter()
+					.append("img")
+					.attr("src", function(d){ return "media/" + d + ".jpg"})
+                    .style('height', '350px')
+                    .style('width', '350px')
+                ;
+				
+				d3.select("#testing-section")
+                    .selectAll("img")
+                    .data(d3.range(1, 10))
+                    .enter()
+                    .append("img")
+                    .attr("src", function(d){ return "media/" + d + ".jpg"})
+                    .style('height', '350px')
+                    .style('width', '350px')
+                ;
+
+                var bdt = new BinaryDecisionTree({
+                    el: "#train-vs-test",
+                    trainingSection: "#training-section",
+                    testSection: "#testing-section",
+                    
+					/**
+                     * 預設會讓小球在上方排排站
+                     * 如果不要排排站的話，必須要把這個 paramater 設成 false
+                     * 如果要排排站的話，直接註解掉這行就行
+                    */
+                    //flood: false
+                });
+
+                bdt.setDataFromJson("./data.json", function(){
+                    bdt.install();
+                    bdt.play();
+                })
+
+                /**
+                 * or
+                 * bdt.setDataFromObject({ 
+                 *  tree_data: tree_data,
+                 *  tree_training_set: tree_training_set,
+                 *  tree_stats: tree_stats, 
+                 *  tree_test_set: tree_test_set, 
+                 *  test_stats : test_stats
+                 * })
+                 * 同步函式，不需要 callback
+                 * bdt.install();
+                 * bdt.play();
+                */
+            }
+        </script>
+
+</body>
+
+
+
+</html>
