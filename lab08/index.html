@@ -82,17 +82,17 @@
     <div>
       展示區
       <hr>
-      <svg id="svg1" height="450" width="350">
+      <svg id="zhang" height="450" width="350">
       </svg>
-      <svg id="svg2" height="450" width="350">
+      <svg id="yi" height="450" width="350">
       </svg>
-      <svg id="svg3" height="450" width="350">
+      <svg id="wei" height="450" width="350">
       </svg>
     </div>
 
     <script type="text/javascript">
     var line = d3.line();
-    var first = [
+    var zhangSVG = [
                 "m 47.223529,37.647059 15.962353,1.807059 29.515298,-7.830589 11.74588,7.529412 -9.93882,-0.301176 -18.974122,36.442353",
                 "M 42.404706,89.148235 98.12235,67.162353 78.847059,78.908235 49.030588,121.07294",
                 "m 31.261176,130.40941 52.404706,-24.09412 12.950588,13.85412 -4.51765,-0.30117 -15.359996,34.33411 -22.588236,34.33412 -11.444706,13.55294 -2.108235,-4.51765 -7.830588,-15.66117 -3.614118,-27.70824",
@@ -106,7 +106,7 @@
                 "m 141.79294,120.47059 34.03294,46.38117 24.99765,21.98589 56.62118,3.31294"
                 ]
 
-    var middle = [
+    var yiSVG = [
                   "m 21.623529,65.054118 18.974118,-1.807059 30.72,-12.348235 -1.807059,-7.228236 18.672941,8.734118",
                   "M 58.065882,69.872941 54.150588,161.43059",
                   "M 27.044706,123.18118 81.557647,95.472941",
@@ -119,7 +119,7 @@
                   "m 90.29176,183.11529 57.22353,-11.14353 56.01883,-7.22823 0.90353,-9.03529 30.72,27.40705"
                 ]
 
-    var last = [
+    var weiSVG = [
                 "M 81.256471,10.842353 37.284706,106.31529 59.270588,87.04 83.665882,75.294118 106.85647,46.983529 74.329412,89.449412 53.247059,137.03529 81.858824,108.12235",
                 "M 97.82118,100.29176 90.89412,114.44706 71.317647,133.12",
                 "m 44.512941,171.67059 7.529412,28.91294",
@@ -134,80 +134,52 @@
                 "m 130.34824,175.88706 31.02117,-6.62588 48.79059,-4.81883 -0.90353,-7.52941 25.29882,24.99765",
                 "m 172.21176,36.442353 13.85412,24.094118"
               ]
-
+setInterval(window.onload = () => {
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-async function first_N(){
-    for (var i = 0; i < first.length; i++) {
-      d3.select("#svg1")
+async function zhangSVG_N(){
+    for (var i = 0; i < zhangSVG.length; i++) {
+      d3.select("#zhang")
       .append('path')
       .attr('class', 'path')
       .attr('fill', "none")
       .attr('stroke', "teal")
       .attr('stroke-width', "2")
-      .attr('d', first[i]);
+      .attr('d', zhangSVG[i]);
       console.log(i);
       await sleep(500);
     }
 }
-first_N()
+zhangSVG_N()
 
-async function middle_N(){
-    for (var j = 0; j < middle.length; j++) {
-        d3.select("#svg2")
+async function yiSVG_N(){
+    for (var j = 0; j < yiSVG.length; j++) {
+        d3.select("#yi")
         .append('path')
         .attr('class', 'path')
         .attr('fill', "none")
         .attr('stroke', "teal")
         .attr('stroke-width', "2")
-        .attr('d', middle[j]);
+        .attr('d', yiSVG[j]);
         console.log(j);
         await sleep(500);
     }
 }
-middle_N()
+yiSVG_N()
 
-async function last_N(){
-    for (var k = 0; k < last.length; k++) {
-      d3.select("#svg3")
+async function weiSVG_N(){
+    for (var k = 0; k < weiSVG.length; k++) {
+      d3.select("#wei")
       .append('path')
       .attr('class', 'path')
       .attr('fill', "none")
       .attr('stroke', "teal")
       .attr('stroke-width', "2")
-      .attr('d', last[k]);
+      .attr('d', weiSVG[k]);
       console.log(k);
       await sleep(500);
     }
 }
-last_N()
-
-
-
-    // d3.select("#svg2")
-    // .selectAll('path')
-    // .data(middle)
-    // .enter()
-    // .append('path')
-    // .attr('class', 'path')
-    // .attr('fill', "none")
-    // .attr('stroke', "black")
-    // .attr('stroke-width', "6.103")
-    // .attr('d', function(d){
-    //   return d;
-    // });
-    //
-    // d3.select("#svg3")
-    // .selectAll('path')
-    // .data(last)
-    // .enter()
-    // .append('path')
-    // .attr('class', 'path')
-    // .attr('fill', "none")
-    // .attr('stroke', "black")
-    // .attr('stroke-width', "6.103")
-    // .attr('d', function(d){
-    //   return d;
-    // });
-      // Your beautiful D3 code will go here
+weiSVG_N()
+}, 9000)
     </script>
   </html>
