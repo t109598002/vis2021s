@@ -1,14 +1,213 @@
 <!DOCTYPE html>
 <html lang="zh-Hant-TW">
-  <head>
+<head>
     <meta charset="utf-8">
-    <title>D3 Page Template</title>
-    <script src="http://d3js.org/d3.v6.min.js" charset="utf-8"></script> <!-- v6.5.0 -->
+    <title>Lab 8</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@900&display=swap');
+
+        h1, div {
+          background-color: rgba(255, 255, 0, 0.1);
+          font-family: 'Noto Serif JP', serif;
+          font-size: 24pt;
+          border: solid 1px black;
+          width: 90%;
+          margin: 5px auto;
+          padding: 10px;
+        }
+
+        div {
+          font-size: 12pt;
+        }
+
+        body {
+            background-color: rgba(255, 128, 255, 0.1);
+        }
+
+        video:hover {
+            box-shadow: 0 0 2px 1px rgba(0, 140, 186, 0.5);
+        }
+
+        .path {
+          stroke-dasharray: 1000;
+          stroke-dashoffset: 1000;
+          animation: dash 5s linear forwards;
+        }
+        @keyframes dash {
+          to {
+            stroke-dashoffset: 0;
+          }
+        }
+    </style>
+    <script src="https://d3js.org/d3.v6.min.js" charset="utf-8"></script> <!-- v6.5.0 -->
 </head>
 <body>
+    <h1>
+        lab08 漢字書寫 (鉛筆字) (毛筆字也OK!) Path Animation
+    </h1>
+    <div>
+      限定使用 D3.js，參考以下影片。
+      <ul>
+        <li><a href="https://bl.ocks.org/basilesimon/f164aec5758d16d51d248e41af5428e4">Animate path in D3</a></li>
+        <li><a href="https://codepen.io/MyXoToD/post/howto-self-drawing-svg-animation">"Self-Drawing" SVG</a></li>
+        <li><a href="https://stackoverflow.com/questions/15275362/how-to-transition-a-path-in-d3-js">How to transition a path in d3.js</a></li>
+        <li><a href="https://css-tricks.com/svg-line-animation-works/">How SVG Line Animation Works</a></li>
+        <li><a href="http://blog.roachking.net/blog/2014/10/31/osolve-team-drawing-animation/">使用 SVG 將圖片做成動畫</a></li>
+        <li><a href="https://www.hesyifei.com/">何一非</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <video width="400" controls loop autoplay>
+        <source src="3.mp4" type="video/mp4">
+      </video>
+    </div>
+
+    <div>
+      展示區(姓名)
+      <hr>
+      <img width="256" src="./zhang.svg">
+      <img width="256" src="./yi.svg">
+      <img width="256" src="./wei.svg">
+    </div>
+
+    <div>
+      展示區(SVG)
+      <hr>
+      <img width="256" src="./zhang_svg_path.svg">
+      <img width="256" src="./yi_svg_path.svg">
+      <img width="256" src="./wei_svg_path.svg">
+    </div>
+
+    <div>
+      展示區
+      <hr>
+      <svg id="svg1" height="450" width="350">
+      </svg>
+      <svg id="svg2" height="450" width="350">
+      </svg>
+      <svg id="svg3" height="450" width="350">
+      </svg>
+    </div>
+
     <script type="text/javascript">
+    var line = d3.line();
+    var first = [
+                "m 47.223529,37.647059 15.962353,1.807059 29.515298,-7.830589 11.74588,7.529412 -9.93882,-0.301176 -18.974122,36.442353",
+                "M 42.404706,89.148235 98.12235,67.162353 78.847059,78.908235 49.030588,121.07294",
+                "m 31.261176,130.40941 52.404706,-24.09412 12.950588,13.85412 -4.51765,-0.30117 -15.359996,34.33411 -22.588236,34.33412 -11.444706,13.55294 -2.108235,-4.51765 -7.830588,-15.66117 -3.614118,-27.70824",
+                "m 131.25176,26.804706 6.32471,59.331765 -5.42118,-1.204706 16.26353,19.275295",
+                "M 138.48,35.237647 193.89647,17.468235",
+                "m 146.91294,66.258824 39.15294,-21.38353",
+                "M 149.02118,83.124706 183.65647,69.571765",
+                "M 103.84471,118.36235 204.73882,84.931765",
+                "m 134.56471,117.76 -12.64942,13.25176 1.20471,60.2353 5.72235,12.34823 6.62589,1.80706 L 135,209 158.35765,167.15294",
+                "m 193.89647,106.31529 -53.91059,36.44236",
+                "m 141.79294,120.47059 34.03294,46.38117 24.99765,21.98589 56.62118,3.31294"
+                ]
+
+    var middle = [
+                  "m 21.623529,65.054118 18.974118,-1.807059 30.72,-12.348235 -1.807059,-7.228236 18.672941,8.734118",
+                  "M 58.065882,69.872941 54.150588,161.43059",
+                  "M 27.044706,123.18118 81.557647,95.472941",
+                  "M 15.298824,185.82588 29.454118,178.29647 90.59294,114.74824",
+                  "m 74.028235,106.61647 18.974115,-1.20471 117.45883,-20.479995 3.31294,-14.456471 34.63529,31.021176",
+                  "m 110.47059,60.235294 0.90353,60.837646 -4.51765,67.76471",
+                  "m 142.39529,46.682353 6.02353,89.449407",
+                  "M 182.75294,26.804706 175.82588,130.10824",
+                  "m 139.38353,128.60235 48.48941,-7.52941",
+                  "m 90.29176,183.11529 57.22353,-11.14353 56.01883,-7.22823 0.90353,-9.03529 30.72,27.40705"
+                ]
+
+    var last = [
+                "M 81.256471,10.842353 37.284706,106.31529 59.270588,87.04 83.665882,75.294118 106.85647,46.983529 74.329412,89.449412 53.247059,137.03529 81.858824,108.12235",
+                "M 97.82118,100.29176 90.89412,114.44706 71.317647,133.12",
+                "m 44.512941,171.67059 7.529412,28.91294",
+                "m 71.016471,152.39529 18.974117,18.67295",
+                "m 96.31529,137.03529 28.00942,24.69647",
+                "M 166.48941,5.12 132.15529,60.837647 109.86824,87.943529",
+                "m 142.39529,32.225882 -1.50588,176.489408 -7.83059,-8.43294 28.91294,43.97177",
+                "m 134.56471,96.677647 21.38353,-3.011765 46.08,-18.672941 v -4.21647 l 27.70823,4.818823",
+                "m 176.42824,96.376471 -0.30118,75.595289",
+                "M 149.02118,124.98824 164.68235,123.18118 199.92,111.13412",
+                "m 146.61176,150.28706 58.12706,-16.86588",
+                "m 130.34824,175.88706 31.02117,-6.62588 48.79059,-4.81883 -0.90353,-7.52941 25.29882,24.99765",
+                "m 172.21176,36.442353 13.85412,24.094118"
+              ]
+
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
+async function first_N(){
+    for (var i = 0; i < first.length; i++) {
+      d3.select("#svg1")
+      .append('path')
+      .attr('class', 'path')
+      .attr('fill', "none")
+      .attr('stroke', "teal")
+      .attr('stroke-width', "2")
+      .attr('d', first[i]);
+      console.log(i);
+      await sleep(500);
+    }
+}
+first_N()
+
+async function middle_N(){
+    for (var j = 0; j < middle.length; j++) {
+        d3.select("#svg2")
+        .append('path')
+        .attr('class', 'path')
+        .attr('fill', "none")
+        .attr('stroke', "teal")
+        .attr('stroke-width', "2")
+        .attr('d', middle[j]);
+        console.log(j);
+        await sleep(500);
+    }
+}
+middle_N()
+
+async function last_N(){
+    for (var k = 0; k < last.length; k++) {
+      d3.select("#svg3")
+      .append('path')
+      .attr('class', 'path')
+      .attr('fill', "none")
+      .attr('stroke', "teal")
+      .attr('stroke-width', "2")
+      .attr('d', last[k]);
+      console.log(k);
+      await sleep(500);
+    }
+}
+last_N()
+
+
+
+    // d3.select("#svg2")
+    // .selectAll('path')
+    // .data(middle)
+    // .enter()
+    // .append('path')
+    // .attr('class', 'path')
+    // .attr('fill', "none")
+    // .attr('stroke', "black")
+    // .attr('stroke-width', "6.103")
+    // .attr('d', function(d){
+    //   return d;
+    // });
+    //
+    // d3.select("#svg3")
+    // .selectAll('path')
+    // .data(last)
+    // .enter()
+    // .append('path')
+    // .attr('class', 'path')
+    // .attr('fill', "none")
+    // .attr('stroke', "black")
+    // .attr('stroke-width', "6.103")
+    // .attr('d', function(d){
+    //   return d;
+    // });
       // Your beautiful D3 code will go here
     </script>
-  </body>
-</html>
-  
+  </html>
