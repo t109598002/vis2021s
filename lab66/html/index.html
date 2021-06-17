@@ -8,9 +8,11 @@
     <style>
         html,
         body {
+            background-color: #262727;
+            color: white;
             height: 200%;
         }
-        #training-section, #testing-section {
+        #testing-section {
             height: 100%;
 			overflow: hidden;
         }
@@ -49,7 +51,7 @@
         <div id="left">
             <div id="topic-section">
                 <h1>
-                    題目：World Happiness Report 2006~2020
+                    題目：Breast Cancer Wisconsin (Prognostic) Data Set
                 </h1>
             </div>
             <div id="training-section">
@@ -57,9 +59,14 @@
 					訓練資料集的部分
 				</h1>
             </div>
+            <div id="trainingdataset-section">
+                <h2>
+                    訓練資料相關
+                </h2>
+            </div>
             <div id="testing-section">
 				<h1>
-					測試資料集的部分
+					圖片
 				</h1>
             </div>
         </div>
@@ -71,18 +78,24 @@
         <script src="./lib/binarydecisiontree.min.js"></script>
 
         <script>
-            var topicName = "The World Happiness Report is a landmark survey of the state of global happiness . The report continues to gain global recognition as governments, organizations and civil society increasingly use happiness indicators to inform their policy-making decisions. Leading experts across fields – economics, psychology, survey analysis, national statistics, health, public policy and more – describe how measurements of well-being can be used effectively to assess the progress of nations. The reports review the state of happiness in the world today and show how the new science of happiness explains personal and national variations in happiness."
+            var topicName = "“每一個row的記錄代表一種乳腺癌的隨訪數據 案件。這些是 Wolberg 醫生自1984年以來接診的連續患者，僅包括那些表現出侵入性的乳腺癌病例，並且在診斷期間沒有轉移的相關數據。"
+            var cellNuc = "為每個細胞核計算十個實值特徵"
+            var countryName = "Diagnosis：M = 惡性, B = 良性";
 
-            var countryName = "Country name：國家";
-            var lifeLadder = "Life Ladder：生命階梯";
-            var perGDP = "Log GDP per capita：人均GDP"
-            var socialSupport = "Social support：社會支持"
-            var healthyLife = "Healthy life expectancy at birth：出生時的健康預期壽命"
-            var freedom = "Freedom to make life choices：自由選擇人生"
-            var generosity = "Generosity：慷慨"
-            var corruptionPer = "Perceptions of corruption：對於腐敗的看法"
-            var positiveAffect = "Positive affect：正面影響"
+            var lifeLadder = "Radius：從中心到周邊各點的距離平均值";
+            var perGDP = "Texture：灰度值的標準偏差"
+            var socialSupport = "Perimeter：細胞周長"
+            var healthyLife = "Area：細胞面積"
+            var freedom = "Smoothness：半徑長度的局部變化"
+            var generosity = "Compactness：周長^2 / 面積-1.0"
+            var corruptionPer = "Concavity：輪廓凹部的嚴重程度"
+            var positiveAffect = "Concave points：輪廓凹入部分的數量"
+            var symmetry = "Symmetry：對稱性"
+            var dim = "Fractal dimension：“海岸線近似” - 1"
 
+            var numbersTrain = "訓練資料集：70%"
+            var numbersTest = "測試資料集：30%"
+            var deleteRol = "刪除欄位：id，因為這是病例ID，沒什麼實質性的幫助。"
             window.onload = function () {
                 function resizeRight(){
                     d3.select("#train-vs-test")
@@ -116,6 +129,15 @@
                     .text(countryName)
                 ;
                 d3.select("#training-section")
+                    .selectAll("img")
+                    .data(d3.range(1))
+                    .enter()
+                    .append("img")
+                    .attr("src", function(d){ return "media/bm.jpg"})
+                    .style('height', '400px')
+                    .style('width', '600px')
+                ;
+                d3.select("#training-section")
                     .selectAll("p")
                     .data(d3.range(2))
                     .enter()
@@ -171,90 +193,94 @@
                     .append("p")
                     .text(positiveAffect)
                 ;
-
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(10))
+                    .enter()
+                    .append("p")
+                    .text(symmetry)
+                ;
+                d3.select("#training-section")
+                    .selectAll("p")
+                    .data(d3.range(11))
+                    .enter()
+                    .append("p")
+                    .text(dim)
+                ;
+                d3.select("#trainingdataset-section")
+                    .selectAll("p")
+                    .data(d3.range(1))
+                    .enter()
+                    .append("p")
+                    .text(numbersTrain)
+                ;
+                d3.select("#trainingdataset-section")
+                    .selectAll("p")
+                    .data(d3.range(2))
+                    .enter()
+                    .append("p")
+                    .text(numbersTest)
+                ;
+                d3.select("#trainingdataset-section")
+                    .selectAll("p")
+                    .data(d3.range(3))
+                    .enter()
+                    .append("p")
+                    .text(deleteRol)
+                ;
 
                 d3.select("#testing-section")
                     .selectAll("p")
                     .data(d3.range(1))
                     .enter()
                     .append("p")
-                    .text(countryName)
+                    .text("腫瘤判斷分佈")
                 ;
+
+				d3.select("#testing-section")
+                    .selectAll("img")
+					.data(d3.range(1))
+					.enter()
+					.append("img")
+					.attr("src", function(d){ return "media/scale.jpg"})
+                    .style('height', '400px')
+                    .style('width', '750px')
+                ;
+
                 d3.select("#testing-section")
                     .selectAll("p")
                     .data(d3.range(2))
                     .enter()
                     .append("p")
-                    .text(lifeLadder)
+                    .text("繪製平均特徵與良惡性之間的熱圖")
                 ;
+
+                d3.select("#testing-section")
+                    .selectAll("img")
+                    .data(d3.range(2))
+                    .enter()
+                    .append("img")
+                    .attr("src", function(d){ return "media/hot.jpg"})
+                    .style('height', '400px')
+                    .style('width', '750px')
+                ;
+
                 d3.select("#testing-section")
                     .selectAll("p")
                     .data(d3.range(3))
                     .enter()
                     .append("p")
-                    .text(perGDP)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(4))
-                    .enter()
-                    .append("p")
-                    .text(socialSupport)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(5))
-                    .enter()
-                    .append("p")
-                    .text(healthyLife)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(6))
-                    .enter()
-                    .append("p")
-                    .text(freedom)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(7))
-                    .enter()
-                    .append("p")
-                    .text(generosity)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(8))
-                    .enter()
-                    .append("p")
-                    .text(corruptionPer)
-                ;
-                d3.select("#testing-section")
-                    .selectAll("p")
-                    .data(d3.range(9))
-                    .enter()
-                    .append("p")
-                    .text(positiveAffect)
+                    .text("根據數據的單獨類別進行分類")
                 ;
 
-				d3.select("#training-section")
+                d3.select("#testing-section")
                     .selectAll("img")
-					.data(d3.range(1, 10))
-					.enter()
-					.append("img")
-					.attr("src", function(d){ return "media/" + d + ".jpg"})
-                    .style('height', '350px')
-                    .style('width', '350px')
-                ;
-				
-				d3.select("#testing-section")
-                    .selectAll("img")
-                    .data(d3.range(1, 10))
+                    .data(d3.range(3))
                     .enter()
                     .append("img")
-                    .attr("src", function(d){ return "media/" + d + ".jpg"})
-                    .style('height', '350px')
-                    .style('width', '350px')
+                    .attr("src", function(d){ return "media/__results___7_0.png"})
+                    .style('height', '2800px')
+                    .style('width', '750px')
                 ;
 
                 var bdt = new BinaryDecisionTree({
@@ -270,7 +296,7 @@
                     //flood: false
                 });
 
-                bdt.setDataFromJson("./data.json", function(){
+                bdt.setDataFromJson("./bcw.json", function(){
                     bdt.install();
                     bdt.play();
                 })

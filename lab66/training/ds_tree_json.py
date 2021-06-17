@@ -140,10 +140,10 @@ def tree_state(datasetX, datasety, clf, features, dataIndex, node_index=0, nodes
         
     return nodes
 
-datacsv = pd.read_csv(str(pathlib.Path.cwd())+'\\world-happiness-report.csv')
+datacsv = pd.read_csv(str(pathlib.Path.cwd())+'\\bcw.csv')
 datacsv = datacsv.fillna(0)
 labelencoder = LabelEncoder()
-datacsv['Country name']= labelencoder.fit_transform(datacsv['Country name'])
+datacsv['diagnosis']= labelencoder.fit_transform(datacsv['diagnosis'])
 
 columns = datacsv.columns.tolist()
 
@@ -186,7 +186,7 @@ output = eval(str({
 }))
 
 
-with open('data.json', 'w', encoding='utf-8') as f:
+with open('bcw.json', 'w', encoding='utf-8') as f:
     f.write(json.dumps(output, ensure_ascii=False, indent=4))
 
 
