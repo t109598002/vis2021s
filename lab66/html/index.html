@@ -6,10 +6,10 @@
     <meta charset="utf-8">
 
     <style>
-        html,
         body {
-            background-color: #262727;
-            color: white;
+			background-image: url('./media/backgroundPicture.jpg');
+			background-repeat: no-repeat;
+			background-size: cover;
             height: 200%;
         }
         #testing-section {
@@ -42,18 +42,44 @@
 </head>
 
 <body>
-
-
         <div id="right">
             <div id="train-vs-test"></div>
         </div>
 
         <div id="left">
+			<div>
+				<h1>
+					資料可視化 - 期末專題
+				</h1>
+			</div>
+			<div id="topic-section">
+                <p1>
+                    小組成員：張玴維 109598002 、 劉純源 109598020
+                </p1>
+            </div>
+			<hr>
             <div id="topic-section">
                 <h1>
-                    題目：Breast Cancer Wisconsin (Prognostic) Data Set
+                    題目：Breast Cancer Wisconsin Data Set
                 </h1>
             </div>
+			<div id="dataRef">
+				<h2>
+					資料來源：
+				</h2>
+				<p1>
+					使用Kaggle上提供的 Breast Cancer Wisconsin 的數據集。
+				</p1>
+			</div>
+			<div id="dataReadMe">
+				<h2>
+					資料說明：
+				</h2>
+				<p1>
+					每一筆記錄代表一種乳腺癌的隨訪數據案件。這些是 Wolberg 醫生自1984年以來接診的連續患者，僅包括那些表現出侵入性的乳腺癌病例，並且在診斷期間沒有轉移的相關數據。
+				</p1>
+			</div>
+			<hr>
             <div id="training-section">
 				<h1>
 					訓練資料集的部分
@@ -64,6 +90,7 @@
                     訓練資料相關
                 </h2>
             </div>
+			<hr>
             <div id="testing-section">
 				<h1>
 					圖片
@@ -78,7 +105,6 @@
         <script src="./lib/binarydecisiontree.min.js"></script>
 
         <script>
-            var topicName = "“每一個row的記錄代表一種乳腺癌的隨訪數據 案件。這些是 Wolberg 醫生自1984年以來接診的連續患者，僅包括那些表現出侵入性的乳腺癌病例，並且在診斷期間沒有轉移的相關數據。"
             var cellNuc = "為每個細胞核計算十個實值特徵"
             var countryName = "Diagnosis：M = 惡性, B = 良性";
 
@@ -114,20 +140,13 @@
                  * 填版面，不然全部都是白色的很單調
                  * 這兩個 section 是要讓同學放說明資料和圖片的地方
                 */
-                d3.select("#topic-section")
-                    .selectAll("p")
-                    .data(d3.range(1))
-                    .enter()
-                    .append("p")
-                    .text(topicName)
-                ;
                 d3.select("#training-section")
                     .selectAll("p")
                     .data(d3.range(1))
                     .enter()
                     .append("p")
-                    .text(countryName)
-                ;
+                    .text(countryName);
+					
                 d3.select("#training-section")
                     .selectAll("img")
                     .data(d3.range(1))
@@ -135,8 +154,8 @@
                     .append("img")
                     .attr("src", function(d){ return "media/bm.jpg"})
                     .style('height', '400px')
-                    .style('width', '600px')
-                ;
+                    .style('width', '600px');
+					
                 d3.select("#training-section")
                     .selectAll("p")
                     .data(d3.range(2))
@@ -252,7 +271,7 @@
                     .data(d3.range(2))
                     .enter()
                     .append("p")
-                    .text("繪製平均特徵與良惡性之間的熱圖")
+                    .text("繪製每個欄位間的關聯熱力圖")
                 ;
 
                 d3.select("#testing-section")
@@ -270,7 +289,7 @@
                     .data(d3.range(3))
                     .enter()
                     .append("p")
-                    .text("根據數據的單獨類別進行分類")
+                    .text("-END-")
                 ;
 
                 d3.select("#testing-section")
@@ -278,8 +297,8 @@
                     .data(d3.range(3))
                     .enter()
                     .append("img")
-                    .attr("src", function(d){ return "media/__results___7_0.png"})
-                    .style('height', '2800px')
+                    //.attr("src", function(d){ return "media/__results___7_0.png"})
+                    .style('height', '2800px')//2800
                     .style('width', '750px')
                 ;
 
